@@ -7,7 +7,7 @@ const users: IUser[] = [
     name:"admin",
     email:"admin@admin.com",
     password:"$2b$10$8bnVy6XkAPndk9.XZEv2qOHHpiqLKfQJVVMFkkrb0Ef96hj09qjli",
-    permissions:['createUser','createTask','updateTask','DeleteTask']
+    permissions:['createUser','createTask','updateTask','DeleteTask','readTask']
   }
 ];
 

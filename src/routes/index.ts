@@ -1,7 +1,7 @@
 import express from "express";
 
 //Importing routers
-import taskHandlerRouter from "./taskHandler";
+import taskHandlerRouter from "./task";
 import userRouter from "./user";
 import authRouter from "./auth";
 
@@ -9,7 +9,7 @@ import authRouter from "./auth";
 const router = express();
 
 //Route to handle tasks
-router.use("/taskHandler", taskHandlerRouter);
+router.use("/task", taskHandlerRouter);
 
 //Route to handle user
 router.use("/user", userRouter);

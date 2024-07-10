@@ -3,6 +3,8 @@ import { NextFunction, Response } from "express";
 import { Request } from "../interface/auth";
 import config from "../config";
 import { IUser } from "../interface/user";
+import { UnaunthicatedError } from "../error/UnauthenticatedError";
+import { ForbiddenError } from "../error/ForbiddenError";
 
 //middleware function to Aunthenticate
 export function aunthenticate(req: Request, res: Response, next: NextFunction) {
@@ -10,7 +12,7 @@ export function aunthenticate(req: Request, res: Response, next: NextFunction) {
   const { authorization } = req.headers;
   //checking if token is provided in authorization
   if (!authorization) {
-    next(new Error("Un-Aunthenticated"));
+    next(new UnaunthicatedError("Un-Aunthenticated"));
   }
   /*
     the incoming token must have format of:
@@ -22,7 +24,7 @@ export function aunthenticate(req: Request, res: Response, next: NextFunction) {
   */
   const token = authorization?.split(" ");
   if (token?.length !== 2 || token[0] !== "Bearer") {
-    next(new Error("Un-Aunthenticated"));
+    next(new UnaunthicatedError("Un-Aunthenticated"));
     return;
   }
   try {
@@ -44,7 +46,7 @@ export function authorize(permission: string) {
     
     const user = req.user!;
     if (!user.permissions.includes(permission)) {
-      next(new Error("Forbidden"));
+      next(new ForbiddenError("Forbidden"));
     }
 
     next();

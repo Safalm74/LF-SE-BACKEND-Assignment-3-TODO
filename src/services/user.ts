@@ -4,14 +4,13 @@ import * as UserModel from "../models/user";
 import { IUser } from "../interface/user";
 //importing bcrypt to hash password
 import bcrypt from "bcrypt";
+import { NotFoundError } from "../error/NotFoundError";
 
 //service function to return user by id
 export function getUserById(id: string) {
   const data = UserModel.getUserById(id);
   if (!data) {
-    return {
-      error: "user not found",
-    };
+    throw (new NotFoundError("user not found"));
   }
   return data;
 }

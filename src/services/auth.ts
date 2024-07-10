@@ -1,4 +1,5 @@
 import config from "../config";
+import { UnaunthicatedError } from "../error/UnauthenticatedError";
 import { IUser } from "../interface/user";
 import { getUserByEmail } from "./user";
 import bcrypt from "bcrypt";
@@ -12,9 +13,7 @@ export async function login(body: Pick<IUser, "email" | "password">) {
 
   //checking if user exists
   if (!existingUser) {
-    return {
-      error: "Invalid email or password",
-    };
+    throw (new UnaunthicatedError("Invalid email or password"));
   }
   //comparing hashed password with incomming password
   const isValidPassword = await bcrypt.compare(
@@ -24,9 +23,7 @@ export async function login(body: Pick<IUser, "email" | "password">) {
 
   //checking if password entered is correct
   if (!isValidPassword) {
-    return {
-      error: "Invalid email or password",
-    };
+    throw (new UnaunthicatedError("Invalid email or password"));
   }
 
   //creating payload to generate tokens
@@ -80,7 +77,7 @@ export async function refreshAccessToken(RefreshToken: string) {
     >;
 
     if (!isValidToken) {
-      return { error: "Un-Aunthenticated" };
+      throw (new UnaunthicatedError("Unaunthicated"));;
     }
 
     //creating payload to generate new access token
@@ -100,6 +97,6 @@ export async function refreshAccessToken(RefreshToken: string) {
     return { accessToken: accessToken };
   } catch (error) {
     //return the error to controller
-    return error;
+    throw error;
   }
 }
