@@ -1,21 +1,7 @@
 //Importing Interface
 import { ITask } from "../interface/task";
-
-//Type for task
-type task = {
-  id: string;
-  name: string;
-  is_finished: boolean;
-};
-
 //Array for storing tasks
-let tasks: task[] = [
-  {
-    id: "1",
-    name: "wash dress",
-    is_finished: false,
-  },
-];
+let tasks: ITask[] = [];
 
 //function to check if task exists on tasks array
 function checkOnTasks(id:string){
@@ -36,10 +22,11 @@ export function createTask(task: ITask) {
   //initializing is_finished flag as false
   const initialFinishFlag = false;
   //creating task obj 
-  const newTask: task = {
+  const newTask: ITask = { 
+    ...task,
     id: newTaskId,
     is_finished: initialFinishFlag,
-    ...task,
+   
   };
   //pushing the obj to task to tasks array
   tasks.push(newTask);
@@ -75,9 +62,9 @@ export function updateTask(id: string, updatedTask: ITask) {
     const temp = update_obj.name;
     const initialFinishFlag = false;
     const newUpdatedTask = {
+      ...updatedTask,
       id: id,
       is_finished: initialFinishFlag,
-      ...updatedTask,
     };
     //replacing the obj with updated obj
     Object.assign(

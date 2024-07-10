@@ -1,10 +1,11 @@
 import { verify } from "jsonwebtoken";
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Response } from "express";
+import { Request } from "../interface/auth";
 import config from "../config";
 import { IUser } from "../interface/user";
 
-//middleware function to auth
-export function auth(req: Request, res: Response, next: NextFunction) {
+//middleware function to Aunthenticate
+export function aunthenticate(req: Request, res: Response, next: NextFunction) {
   //extracting authorization from request header
   const { authorization } = req.headers;
   //checking if token is provided in authorization
@@ -24,15 +25,28 @@ export function auth(req: Request, res: Response, next: NextFunction) {
     next(new Error("Un-Aunthenticated"));
     return;
   }
-  //JWT verify verifies the token and returns decoded token if verified
-  const isValidToken = verify(token[1], config.jwt.jwt_secret!) as Pick<
-      IUser,
-      "id" | "email" | "name"
-    >;
-
-  if (!isValidToken) {
-    next(new Error("Un-Aunthenticated"));
+  try {
+    //JWT verify verifies the token and returns decoded token if verified
+    console.log(verify(token[1], config.jwt.jwt_secret!));
+    const user = verify(token[1], config.jwt.jwt_secret!) as Omit<IUser,"password">;
+    req.user=user;
+    //to next fuction of route
+    next();
+  } catch (error) {
+    console.log(error);
   }
-  //to next fuction of route
-  next();
+}
+
+//middleware function to Authorize
+export function authorize(permission: string) {
+ 
+  return (req: Request, res: Response, next: NextFunction) => {
+    
+    const user = req.user!;
+    if (!user.permissions.includes(permission)) {
+      next(new Error("Forbidden"));
+    }
+
+    next();
+  };
 }

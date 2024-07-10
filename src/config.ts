@@ -12,8 +12,8 @@ const config = {
   },
   jwt: {
     jwt_secret: process.env.JWT_SECRET,
-    accessTokenExpiryS: 60,
-    refrehTokenExpiryS: 300,
+    accessTokenExpiryS: 600,
+    refrehTokenExpiryS: 3000,
   },
 };
 

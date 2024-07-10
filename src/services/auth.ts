@@ -16,7 +16,6 @@ export async function login(body: Pick<IUser, "email" | "password">) {
       error: "Invalid email or password",
     };
   }
-
   //comparing hashed password with incomming password
   const isValidPassword = await bcrypt.compare(
     body.password,
@@ -35,6 +34,7 @@ export async function login(body: Pick<IUser, "email" | "password">) {
     id: existingUser.id,
     name: existingUser.name,
     email: existingUser.email,
+    permissions:existingUser.permissions
   };
 
   //generating access token using config jwt secret
@@ -76,7 +76,7 @@ export async function refreshAccessToken(RefreshToken: string) {
     //JWT verify verifies the token and returns decoded token  if verified
     const isValidToken = verify(token[1], config.jwt.jwt_secret!) as Pick<
       IUser,
-      "id" | "email" | "name"
+      "id" | "email" | "name" | "permissions"
     >;
 
     if (!isValidToken) {
@@ -88,6 +88,7 @@ export async function refreshAccessToken(RefreshToken: string) {
       id: isValidToken.id,
       name: isValidToken.name,
       email: isValidToken.email,
+      permissions:isValidToken.permissions
     };
 
     //generating access token using config jwt secret
