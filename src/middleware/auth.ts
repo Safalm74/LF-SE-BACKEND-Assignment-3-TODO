@@ -29,13 +29,12 @@ export function aunthenticate(req: Request, res: Response, next: NextFunction) {
   }
   try {
     //JWT verify verifies the token and returns decoded token if verified
-    console.log(verify(token[1], config.jwt.jwt_secret!));
     const user = verify(token[1], config.jwt.jwt_secret!) as Omit<IUser,"password">;
     req.user=user;
     //to next fuction of route
     next();
   } catch (error) {
-    console.log(error);
+    next(error);
   }
 }
 

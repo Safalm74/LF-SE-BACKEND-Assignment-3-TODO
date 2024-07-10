@@ -11,7 +11,7 @@ const router = express();
 router.post(
   "/",
   aunthenticate,
-  authorize("createTask"),
+  authorize("task.post"),
   TaskController.createTask
 );
 
@@ -19,21 +19,21 @@ router.post(
 router.get(
   "/",
   aunthenticate,
-  authorize("readTask"),
+  authorize("task.get"),
   TaskController.readTasks
 );
 //route to read remaining tasks:
 router.get(
   "/RemainingTasks",
   aunthenticate,
-  authorize("readTask"),
+  authorize("task.get"),
   TaskController.readRemainingTasks
 );
 //route to read finished tasks:
 router.get(
   "/",
   aunthenticate,
-  authorize("readTask"),
+  authorize("task.get"),
   TaskController.readFinishedTasks
 );
 
@@ -41,7 +41,7 @@ router.get(
 router.put(
   "/:id",
   aunthenticate,
-  authorize("readTask"),
+  authorize("task.put"),
   TaskController.updatedTask
 );
 
@@ -49,7 +49,7 @@ router.put(
 router.delete(
   "/:id",
   aunthenticate,
-  authorize("readTask"),
+  authorize("task.delete"),
   TaskController.deleteTask
 );
 

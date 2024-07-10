@@ -4,18 +4,24 @@ import { IUser } from "../interface/user";
 import { getUserByEmail } from "./user";
 import bcrypt from "bcrypt";
 import { sign, verify } from "jsonwebtoken";
+import loggerWithNameSpace from "../utils/logger";
+
+const logger = loggerWithNameSpace("Auth Service");
 
 //service function to login:
 //returns new access and refresh token
 export async function login(body: Pick<IUser, "email" | "password">) {
   //getting existing user
+  logger.info("Attempting to get email by id");
   const existingUser = getUserByEmail(body.email);
 
   //checking if user exists
   if (!existingUser) {
-    throw (new UnaunthicatedError("Invalid email or password"));
+    logger.error("requested user doesnot exist");
+    throw new UnaunthicatedError("Invalid email or password");
   }
   //comparing hashed password with incomming password
+  logger.info("Checking password");
   const isValidPassword = await bcrypt.compare(
     body.password,
     existingUser.password
@@ -23,23 +29,27 @@ export async function login(body: Pick<IUser, "email" | "password">) {
 
   //checking if password entered is correct
   if (!isValidPassword) {
-    throw (new UnaunthicatedError("Invalid email or password"));
+    logger.error("password doesnot match");
+    throw new UnaunthicatedError("Invalid email or password");
   }
 
   //creating payload to generate tokens
+  logger.info("creating payload");
   const payload = {
     id: existingUser.id,
     name: existingUser.name,
     email: existingUser.email,
-    permissions:existingUser.permissions
+    permissions: existingUser.permissions,
   };
 
   //generating access token using config jwt secret
+  logger.info("creating access token");
   const accessToken = await sign(payload, config.jwt.jwt_secret!, {
     expiresIn: config.jwt.accessTokenExpiryS,
   });
 
   //generating refresh token using config jwt secret
+  logger.info("creating refresh token");
   const refreshToken = await sign(payload, config.jwt.jwt_secret!, {
     expiresIn: config.jwt.refrehTokenExpiryS,
   });
@@ -65,38 +75,38 @@ export async function refreshAccessToken(RefreshToken: string) {
     and splitted token is of length 2
   */
   if (token?.length !== 2 || token[0] !== "Bearer") {
+    logger.error(`token format mismatch: ${token}`);
     return { error: "Un-Aunthenticated" };
   }
 
-  //to prevent server from crashing from JWT token expire
+  logger.info(`Verifying refresh token`);
   try {
     //JWT verify verifies the token and returns decoded token  if verified
-    const isValidToken = verify(token[1], config.jwt.jwt_secret!) as Pick<
+    const isValidToken = verify(token[1], config.jwt.jwt_secret!) as Omit<
       IUser,
-      "id" | "email" | "name" | "permissions"
+      "password"
     >;
-
-    if (!isValidToken) {
-      throw (new UnaunthicatedError("Unaunthicated"));;
-    }
-
+    
     //creating payload to generate new access token
+    logger.info("creating payload");
     const payload = {
       id: isValidToken.id,
       name: isValidToken.name,
       email: isValidToken.email,
-      permissions:isValidToken.permissions
+      permissions: isValidToken.permissions,
     };
 
     //generating access token using config jwt secret
+    logger.info("creating access token");
     const accessToken = await sign(payload, config.jwt.jwt_secret!, {
       expiresIn: config.jwt.accessTokenExpiryS,
     });
-    
+
     //returning access token
     return { accessToken: accessToken };
   } catch (error) {
+    logger.error(`JWT token not verified`);
     //return the error to controller
-    throw error;
+    throw (error);
   }
 }

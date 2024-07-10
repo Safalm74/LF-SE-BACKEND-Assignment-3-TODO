@@ -15,7 +15,7 @@ function checkOnTasks(id: string, user_id: string) {
 export function createTask(task: ITask, user_id: string) {
   for (let taskobj of tasks) {
     if (taskobj.name === task.name && taskobj.user_id === user_id) {
-      throw (new BadRequestError("Task Already Created"));
+      throw (new BadRequestError("Task already exists for the user"));
     }
   }
 
@@ -36,8 +36,6 @@ export function createTask(task: ITask, user_id: string) {
 
   //pushing the obj to task to tasks array
   tasks.push(newTask);
-
-  console.log(tasks);
   return `Task Created: ${task.name}`;
 }
 
