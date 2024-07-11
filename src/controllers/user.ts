@@ -12,7 +12,7 @@ export function getUserById(req: Request, res: Response, next: NextFunction) {
     const { id } = req.params; //getting id from request params
 
     const data = UserService.getUserById(id);
-    res.status(HttpStatusCode.ACCEPTED).json(data);
+    res.status(HttpStatusCode.OK).json(data);
   } catch (error) {
     next(error);
   }
@@ -24,7 +24,7 @@ export async function createUser(req: Request, res: Response, next: NextFunction
   try {
     const { body } = req; //getting new user data from request body
     const req_user= await UserService.createUser(body);
-    res.status(HttpStatusCode.ACCEPTED).json(req_user);
+    res.status(HttpStatusCode.CREATED).json(req_user);
   } catch (error) {
     next(error);
   }
@@ -36,7 +36,7 @@ export function updatedUser(req: Request, res: Response, next: NextFunction) {
   try {
     const id = req.params.id;
     const { body } = req;
-    res.status(HttpStatusCode.ACCEPTED).json({
+    res.status(HttpStatusCode.OK).json({
       msg: UserService.updatedUser(id, body),
     });
   } catch (error) {
@@ -49,7 +49,7 @@ export function deleteUser(req: Request, res: Response, next: NextFunction) {
   logger.info("Request: Delete user");
   try {
     const id = req.params.id;
-    res.status(HttpStatusCode.ACCEPTED).json({
+    res.status(HttpStatusCode.NO_CONTENT).json({
       msg: UserService.deleteUser(id),
     });
   } catch (error) {

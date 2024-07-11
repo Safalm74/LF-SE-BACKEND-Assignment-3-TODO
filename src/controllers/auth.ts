@@ -19,7 +19,7 @@ export async function login(req: Request, res: Response, next: NextFunction) {
   try {
     const { body } = req; //extracting body from req for credential
     const data = await AuthService.login(body);
-    res.status(HttpStatusCode.ACCEPTED).json(data);
+    res.status(HttpStatusCode.OK).json(data);
   } catch (error) {
     next(error);
   }
@@ -44,7 +44,7 @@ export async function refreshAccessToken(
     }
   //generating new access token using the refresh token
   const data = await AuthService.refreshAccessToken(authorization);
-  res.status(HttpStatusCode.ACCEPTED).json(data);
+  res.status(HttpStatusCode.OK).json(data);
   } catch (error) {
     next(error);
   }
