@@ -106,6 +106,8 @@ export async function refreshAccessToken(RefreshToken: string) {
     return { accessToken: accessToken };
   } catch (error) {
     logger.error(`JWT token not verified`);
+
+    console.log(error);
     //return the error to controller
     throw (error);
   }

@@ -1,11 +1,11 @@
 import { NextFunction, Response } from "express";
 import { Request } from "../interface/auth";
-
 import HttpStatusCode from "http-status-codes";
 import { UnaunthicatedError } from "../error/UnauthenticatedError";
 import { ForbiddenError } from "../error/ForbiddenError";
 import { NotFoundError } from "../error/NotFoundError";
 import { BadRequestError } from "../error/BadRequestError";
+import { JsonWebTokenError } from "jsonwebtoken";
 
 export function notFoundError(req: Request, res: Response) {
   return res.status(HttpStatusCode.NOT_FOUND).json({
@@ -40,6 +40,13 @@ export function genericErrorHandler(
       message: error.message,
     });
   }
+
+  if (error instanceof JsonWebTokenError) {
+    return res.status(HttpStatusCode.BAD_REQUEST).json({
+      message: error.message,
+    });
+  }
+
   return res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({
     message: "Internal Server Error",
   });

@@ -1,6 +1,5 @@
 // importing module express
 import express from "express";
-//Importing controllers
 import * as TaskController from "../controllers/task";
 import { aunthenticate, authorize } from "../middleware/auth";
 

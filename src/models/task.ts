@@ -1,6 +1,7 @@
 //Importing Interface
 import { BadRequestError } from "../error/BadRequestError";
 import { ITask } from "../interface/task";
+
 //Array for storing tasks
 let tasks: ITask[] = [];
 
@@ -36,6 +37,7 @@ export function createTask(task: ITask, user_id: string) {
 
   //pushing the obj to task to tasks array
   tasks.push(newTask);
+
   return `Task Created: ${task.name}`;
 }
 
@@ -51,6 +53,7 @@ export function readRemainingTasks(user_id: string) {
   const taskRemaining = tasks.filter((task) => {
     return !task.is_finished;
   });
+
   return taskRemaining;
 }
 
@@ -59,6 +62,7 @@ export function readFinishedTasks(user_id: string) {
   const taskFinished = tasks.filter((task) => {
     return task.is_finished;
   });
+
   return taskFinished;
 }
 
@@ -66,6 +70,7 @@ export function readFinishedTasks(user_id: string) {
 export function updateTask(id: string, updatedTask: ITask, user_id: string) {
   //calling function to return obj with the id
   const update_obj = checkOnTasks(id, user_id);
+
   if (update_obj && update_obj.user_id === user_id) {
     //if obj exists on tasks array
     const temp = update_obj.name;
@@ -74,8 +79,10 @@ export function updateTask(id: string, updatedTask: ITask, user_id: string) {
       id: id,
       user_id: user_id,
     };
+
     //replacing the obj with updated obj
     Object.assign(update_obj, newUpdatedTask);
+
     return ` task updated: from (${temp}) to (${update_obj.name})`;
   } else {
     throw (new BadRequestError(`no task with given id:${id}`)); 
@@ -86,11 +93,13 @@ export function updateTask(id: string, updatedTask: ITask, user_id: string) {
 export function deleteTask(id: string, user_id: string) {
   //calling function to return obj with the id
   const delete_obj = checkOnTasks(id, user_id);
+  
   if (delete_obj && delete_obj.user_id === user_id) {
     //if obj exists on tasks array
     tasks = tasks.filter(({ id: taskId }) => {
       return !(taskId === id);
     });
+
     return ` task deleted: ${delete_obj.name}`;
   } else {
     throw (new BadRequestError(`no task with given id:${id}`)); 

@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from "express";
-//importing user service
 import * as UserService from "../services/user";
 import HttpStatusCode from "http-status-codes";
 import loggerWithNameSpace from "../utils/logger";

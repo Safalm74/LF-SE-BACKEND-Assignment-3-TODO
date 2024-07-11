@@ -1,10 +1,7 @@
 import { Request, Response, NextFunction } from "express";
-//Importing auth services
 import * as AuthService from "../services/auth";
-
 import HttpStatusCode from "http-status-codes";
 import { BadRequestError } from "../error/BadRequestError";
-
 import loggerWithNameSpace from "../utils/logger";
 
 const logger=loggerWithNameSpace('Auth Controller');

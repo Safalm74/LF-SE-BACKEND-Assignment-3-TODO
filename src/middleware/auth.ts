@@ -1,4 +1,4 @@
-import { verify } from "jsonwebtoken";
+import { JsonWebTokenError, verify } from "jsonwebtoken";
 import { NextFunction, Response } from "express";
 import { Request } from "../interface/auth";
 import config from "../config";
