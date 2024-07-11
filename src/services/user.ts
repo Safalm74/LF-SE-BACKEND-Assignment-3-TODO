@@ -11,72 +11,89 @@ const logger = loggerWithNameSpace("User Service");
 //service function to return user by id
 export function getUserById(id: string) {
   logger.info("Attempting to get user by id");
+
   const data = UserModel.getUserById(id);
+
   if (!data) {
     logger.error("user not found");
+
     throw new NotFoundError("user not found");
   }
+
   return data;
 }
 
 //service function to return user by email
 export function getUserByEmail(email: string) {
   logger.info("Attempting to get user by email");
-  try {
-    const data = UserModel.getUserByEmail(email);
-    return data;
-  } catch (error) {
-    throw error;
+
+  const data = UserModel.getUserByEmail(email);
+
+  if (!data) {
+    logger.error("user not found");
+
+    throw new NotFoundError("user not found");
   }
+
+  return data;
 }
 
 //service function to create new user
 export async function createUser(user: IUser) {
   logger.info("Attempting to add user");
-  try {
-    //checking required data (email and password)
-    if (!user.email || !user.password) {
-      logger.error(
-        `[email: ${user.email ? "Got Email" : "MISSING"}]  [password: ${
-          user.password ? "Got password" : "missing"
-        }]`
-      );
-      throw new BadRequestError("Missing: email or password");
-    }
 
-    //to prevent multiple user with same email
-    logger.info(`comparing with existing emails`);
-    if (getUserByEmail(user.email)) {
-      logger.error(`Email is already used:${user.email}`);
-      throw new BadRequestError("Email is already used");
-    }
-
-    //checking if req has name and permissions
-    if (!user.name || !user.permissions) {
-      logger.warn(
-        `[name: ${user.name ? "Got name" : "MISSING"}]  [permissions: ${
-          user.permissions ? "Got permission" : "missing"
-        }]`
-      );
-    }
-
-    const password = await bcrypt.hash(user.password, 10); //hashing password
-
-    const newUser = {
-      ...user,
-      password,
-    };
-
-    //creating new user
-    return UserModel.createUser(newUser);
-  } catch (error) {
-    throw error;
+  //checking required data (email and password)
+  if (!user.email || !user.password) {
+    logger.error(
+      `[email: ${user.email ? "Got Email" : "MISSING"}]  [password: ${
+        user.password ? "Got password" : "missing"
+      }]`
+    );
+    throw new BadRequestError("Missing: email or password");
   }
+
+  logger.info(`comparing with existing emails`);
+
+  //to prevent multiple user with same email
+  if (UserModel.getUserByEmail(user.email)) {
+    logger.error(`Email is already used:${user.email}`);
+    throw new BadRequestError("Email is already used");
+  }
+
+  //checking if req has name and permissions
+  if (!user.name || !user.permissions) {
+    logger.warn(
+      `[name: ${user.name ? "Got name" : "MISSING"}]  [permissions: ${
+        user.permissions ? "Got permission" : "missing"
+      }]`
+    );
+  }
+
+  const password = await bcrypt.hash(user.password, 10); //hashing password
+
+  const newUser = {
+    ...user,
+    password,
+  };
+
+  //creating new user
+  return UserModel.createUser(newUser);
 }
 
 //service to handle update user
 export function updatedUser(id: string, updateUser: IUser) {
   logger.info("Attempting to update user");
+
+  logger.info("Attempting to get user by id");
+
+  const data = UserModel.getUserById(id);
+
+  if (!data) {
+    logger.error("user not found");
+
+    throw new NotFoundError("user not found");
+  }
+
   //checking required data (email and password)
   if (!updateUser.email || !updateUser.password) {
     logger.error(
@@ -89,7 +106,11 @@ export function updatedUser(id: string, updateUser: IUser) {
 
   //to prevent multiple user with same email
   logger.info(`comparing with existing emails`);
-  if ((getUserById(id).email !== updateUser.email) && getUserByEmail(updateUser.email )) { //checking only if email is changed
+  if (
+    UserModel.getUserById(id)!.email !== updateUser.email &&
+    UserModel.getUserByEmail(updateUser.email)
+  ) {
+    //checking only if email is changed
     logger.error(`Email is already used:${updateUser.email}`);
     throw new BadRequestError("Email is already used");
   }
@@ -99,5 +120,14 @@ export function updatedUser(id: string, updateUser: IUser) {
 
 //service to handle delete user
 export function deleteUser(UserId: string) {
+  logger.info("Attempting to get user by id");
+
+  const data = UserModel.getUserById(UserId);
+
+  if (!data) {
+    logger.error("user not found");
+
+    throw new NotFoundError("user not found");
+  }
   return UserModel.deleteUser(UserId);
 }

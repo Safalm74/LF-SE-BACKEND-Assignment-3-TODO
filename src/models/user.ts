@@ -69,9 +69,7 @@ export function updateUser(id: string, updatedUser: IUser) {
     //replacing the obj with updated obj
     Object.assign(update_obj, newUpdatedUser);
     return update_obj;
-  } else {
-    throw (new BadRequestError(`no user with given id:${id}`)); 
-  }
+  } 
 }
 
 //delete user from users array
@@ -84,7 +82,5 @@ export function deleteUser(id: string) {
       return !(userId === id);
     });
     return ` user deleted: ${delete_obj.name}`;
-  } else {
-    throw (new BadRequestError(`no user with given id:${id}`)); 
   }
 }

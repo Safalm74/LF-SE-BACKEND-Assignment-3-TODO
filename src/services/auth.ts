@@ -13,15 +13,18 @@ const logger = loggerWithNameSpace("Auth Service");
 export async function login(body: Pick<IUser, "email" | "password">) {
   //getting existing user
   logger.info("Attempting to get email by id");
+
   const existingUser = getUserByEmail(body.email);
 
   //checking if user exists
   if (!existingUser) {
     logger.error("requested user doesnot exist");
+
     throw new UnaunthicatedError("Invalid email or password");
   }
   //comparing hashed password with incomming password
   logger.info("Checking password");
+
   const isValidPassword = await bcrypt.compare(
     body.password,
     existingUser.password
@@ -30,11 +33,13 @@ export async function login(body: Pick<IUser, "email" | "password">) {
   //checking if password entered is correct
   if (!isValidPassword) {
     logger.error("password doesnot match");
+
     throw new UnaunthicatedError("Invalid email or password");
   }
 
-  //creating payload to generate tokens
   logger.info("creating payload");
+
+  //creating payload to generate tokens
   const payload = {
     id: existingUser.id,
     name: existingUser.name,
@@ -44,6 +49,7 @@ export async function login(body: Pick<IUser, "email" | "password">) {
 
   //generating access token using config jwt secret
   logger.info("creating access token");
+
   const accessToken = await sign(payload, config.jwt.jwt_secret!, {
     expiresIn: config.jwt.accessTokenExpiryS,
   });
@@ -76,7 +82,8 @@ export async function refreshAccessToken(RefreshToken: string) {
   */
   if (token?.length !== 2 || token[0] !== "Bearer") {
     logger.error(`token format mismatch: ${token}`);
-    return { error: "Un-Aunthenticated" };
+
+    throw (new UnaunthicatedError("Un-Aunthenticated"));
   }
 
   logger.info(`Verifying refresh token`);
@@ -89,6 +96,7 @@ export async function refreshAccessToken(RefreshToken: string) {
     
     //creating payload to generate new access token
     logger.info("creating payload");
+
     const payload = {
       id: isValidToken.id,
       name: isValidToken.name,
@@ -98,6 +106,7 @@ export async function refreshAccessToken(RefreshToken: string) {
 
     //generating access token using config jwt secret
     logger.info("creating access token");
+    
     const accessToken = await sign(payload, config.jwt.jwt_secret!, {
       expiresIn: config.jwt.accessTokenExpiryS,
     });
@@ -107,7 +116,6 @@ export async function refreshAccessToken(RefreshToken: string) {
   } catch (error) {
     logger.error(`JWT token not verified`);
 
-    console.log(error);
     //return the error to controller
     throw (error);
   }
