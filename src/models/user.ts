@@ -1,4 +1,3 @@
-import { BadRequestError } from "../error/BadRequestError";
 import { IUser } from "../interface/user";
 import loggerWithNameSpace from "../utils/logger";
 

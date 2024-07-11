@@ -1,8 +1,6 @@
-//interface to receive task
 import { BadRequestError } from "../error/BadRequestError";
 import { NotFoundError } from "../error/NotFoundError";
 import { ITask } from "../interface/task";
-// importing model
 import * as TaskHandlerModel from "../models/task";
 
 //service to handle create task
@@ -21,16 +19,19 @@ export function createTask(task: ITask, user_id: string) {
 //service to handle read task
 export function readTasks(user_id: string) {
   const readData = TaskHandlerModel.readTasks(user_id);
+
   return readData;
 }
 //service to handle read task
 export function readRemainingTasks(user_id: string) {
   const readData = TaskHandlerModel.readRemainingTasks(user_id);
+
   return readData;
 }
 //service to handle read task
 export function readFinishedTasks(user_id: string) {
   const readData = TaskHandlerModel.readFinishedTasks(user_id);
+  
   return readData;
 }
 

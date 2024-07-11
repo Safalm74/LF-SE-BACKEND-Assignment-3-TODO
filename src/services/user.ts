@@ -1,4 +1,3 @@
-//importing user model
 import * as UserModel from "../models/user";
 import { IUser } from "../interface/user";
 import bcrypt from "bcrypt";
@@ -57,6 +56,7 @@ export async function createUser(user: IUser) {
   //to prevent multiple user with same email
   if (UserModel.getUserByEmail(user.email)) {
     logger.error(`Email is already used:${user.email}`);
+
     throw new BadRequestError("Email is already used");
   }
 
@@ -101,17 +101,21 @@ export function updatedUser(id: string, updateUser: IUser) {
         updateUser.password ? "Got password" : "missing"
       }]`
     );
+
     throw new BadRequestError("Missing: email or password");
   }
 
-  //to prevent multiple user with same email
+
   logger.info(`comparing with existing emails`);
+
+  //to prevent multiple user with same email
   if (
     UserModel.getUserById(id)!.email !== updateUser.email &&
     UserModel.getUserByEmail(updateUser.email)
   ) {
     //checking only if email is changed
     logger.error(`Email is already used:${updateUser.email}`);
+
     throw new BadRequestError("Email is already used");
   }
 
@@ -129,5 +133,6 @@ export function deleteUser(UserId: string) {
 
     throw new NotFoundError("user not found");
   }
+  
   return UserModel.deleteUser(UserId);
 }
