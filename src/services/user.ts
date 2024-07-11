@@ -1,8 +1,6 @@
 //importing user model
 import * as UserModel from "../models/user";
-//importing user interface
 import { IUser } from "../interface/user";
-//importing bcrypt to hash password
 import bcrypt from "bcrypt";
 import { NotFoundError } from "../error/NotFoundError";
 import loggerWithNameSpace from "../utils/logger";
